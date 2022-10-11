@@ -33,15 +33,20 @@ function createOrder(req, res, next) {
 }
 
 ///UPDATE
-function updateOrder(req, res, next) {
+function updateOrder(req, res) {
   const { data: { deliverTo, mobileNumber, dishes, status } = {} } = req.body;
-  res.locals.order = {
-    id: res.locals.order.id,
-    deliverTo: deliverTo,
-    mobileNumber: mobileNumber,
-    dishes: dishes,
-    status: status,
-  };
+  if (deliverTo) {
+    res.locals.order.deliverTo = deliverTo;
+  }
+  if (mobileNumber) {
+    res.locals.order.mobileNumber = mobileNumber;
+  }
+  if (dishes) {
+    res.locals.order.dishes = dishes;
+  }
+  if (status) {
+    res.locals.order.status = status;
+  }
 
   res.json({ data: res.locals.order });
 }
@@ -69,7 +74,7 @@ function orderStatus(req, res, next) {
 
   let message;
   if (id && id !== orderId)
-    message = `Oder id doesnt match with route id. Oder: ${id}, Route: ${orderId}`;
+    message = `Order id doesnt match with route id. Order: ${id}, Route: ${orderId}`;
   else if (
     !status ||
     status === "" ||
@@ -119,15 +124,6 @@ function orderExists(req, res, next) {
   }
   next();
 }
-
-/////DELETE
-
-/*function destroy(req, res, next) {
-  const { orderId } = req.params;
-  const indexToDeleteFrom = orders.findIndex(order => order.id === Number(orderId));
-  orders.splice(indexToDeleteFrom, 1);
-  res.sendStatus(204);
-}*/
 
 function destroy(req, res, next) {
   const i = orders.indexOf(res.locals.order);
